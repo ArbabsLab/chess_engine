@@ -71,15 +71,18 @@ class State:
     #TODO update board and pieces dict
     #may have to alter for capturing since xor wont work in that case
     def updateBoard(self, a, b, piece_to_update):
-        self.board_state = self.board_state ^ (2**a)
-        self.board_state = self.board_state | (2**b)
+        #self.board_state = self.board_state ^ (2**a)
+        #self.board_state = self.board_state | (2**b)
         self.pieces[piece_to_update] = self.pieces[piece_to_update] ^ (2**a) | (2**b)
+        self.board_state = 0
+        for piece, position in self.pieces.items():
+            self.board_state = self.board_state | position
 
 
 state = State()
-state.showBoard()  # Show initial board
-state.updateBoard(8, 24, "white_pawns")  # Move white pawn from A2 to A4
-state.showBoard()  # Show updated board
+state.showBoard() 
+state.updateBoard(8, 24, "white_pawns")  
+state.showBoard()  
 
     
 
