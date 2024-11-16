@@ -51,43 +51,34 @@ class State:
         self.blackMove = not self.whiteMove
         self.whiteMove = not self.blackMove
     
+    
     def getPiece(self, square):
-        for piece, pos in self.pieces.items():
-            
+    #parse square into bit position
+        square = 2 ** square
 
+        for piece, pos in self.pieces.items():
+            check = bool(self.board_state & pos & square)
+            if check:
+                return piece
+            
+    #TODO: move piece from a to b
+    #get piece at a, move to b
 
     def moveHandle(self, a, b):
-        #check whose turn it is
-        #validate appropriate color piece is on a
-        #check if move is valid
-        #update self.board_state
-        #toggle turn
-        
-        if self.whiteMove:
-            moving_piece = self.getPiece(a)
-            # Validate if it's a white piece
-            if moving_piece == "w":
-                self.updateBoard(a, b, moving_piece)
-                self.toggleTurn()
-                self.move_log.append((a, b, moving_piece))
-        elif self.blackMove:
-            moving_piece = self.getPiece(a)
-            # Validate if it's a black piece
-            if moving_piece == "b":
-                self.updateBoard(a, b, moving_piece)
-                self.toggleTurn()
-                self.move_log.append((a, b, moving_piece))
+        pass
+
     
-    def updateBoard(self, a, b, piece_color):
-    
-        self.board_state = self.board_state & ~(1 << a)  
-        self.board_state = self.board_state | (1 << b)     # Set the to square
-        self.pieces[piece_color] |= (1 << b)
+    #TODO update board and pieces dict
+    #may have to alter for capturing since xor wont work in that case
+    def updateBoard(self, a, b, piece_to_update):
+        self.board_state = self.board_state ^ (2**a)
+        self.board_state = self.board_state | (2**b)
+        self.pieces[piece_to_update] = self.pieces[piece_to_update] ^ (2**a) | (2**b)
 
 
 state = State()
 state.showBoard()  # Show initial board
-state.moveHandle(8, 16)  # Move white pawn from E2 to E4
+state.updateBoard(8, 24, "white_pawns")  # Move white pawn from A2 to A4
 state.showBoard()  # Show updated board
 
     
