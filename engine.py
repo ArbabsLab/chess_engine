@@ -1,6 +1,4 @@
-
-A1, H1 = 0, 7
-A8, H8 = 56, 63
+#Will handle all states of the game and state updates
 
 #initialize starting board
 class State:
@@ -24,10 +22,14 @@ class State:
         for piece, position in self.pieces.items():
             self.board_state = self.board_state | position
         
-
+        #initial flags and checks
+        self.whiteMove = True
+        self.blackMove = False
+        self.move_log = []
         self.in_check = False
         self.in_stalemate = False
         self.in_mate = False
+    
     
     def getBoard(self):
         board = []
@@ -45,7 +47,54 @@ class State:
                 print(board[i], end=" ")
         print("\n")
 
+    def toggleTurn(self):
+        self.blackMove = not self.whiteMove
+        self.whiteMove = not self.blackMove
+    
+    def getPiece(self, square):
+        for piece, pos in self.pieces.items():
+            
+
+
+    def moveHandle(self, a, b):
+        #check whose turn it is
+        #validate appropriate color piece is on a
+        #check if move is valid
+        #update self.board_state
+        #toggle turn
         
+        if self.whiteMove:
+            moving_piece = self.getPiece(a)
+            # Validate if it's a white piece
+            if moving_piece == "w":
+                self.updateBoard(a, b, moving_piece)
+                self.toggleTurn()
+                self.move_log.append((a, b, moving_piece))
+        elif self.blackMove:
+            moving_piece = self.getPiece(a)
+            # Validate if it's a black piece
+            if moving_piece == "b":
+                self.updateBoard(a, b, moving_piece)
+                self.toggleTurn()
+                self.move_log.append((a, b, moving_piece))
+    
+    def updateBoard(self, a, b, piece_color):
+    
+        self.board_state = self.board_state & ~(1 << a)  
+        self.board_state = self.board_state | (1 << b)     # Set the to square
+        self.pieces[piece_color] |= (1 << b)
+
+
+state = State()
+state.showBoard()  # Show initial board
+state.moveHandle(8, 16)  # Move white pawn from E2 to E4
+state.showBoard()  # Show updated board
+
+    
+
+    
+
+
         
 
 
