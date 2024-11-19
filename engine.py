@@ -55,17 +55,33 @@ class State:
     def getPiece(self, square):
     #parse square into bit position
         square = 2 ** square
+        curr = ''
 
         for piece, pos in self.pieces.items():
             check = bool(self.board_state & pos & square)
             if check:
-                return piece
+                curr = piece
             
-    #TODO: move piece from a to b
-    #get piece at a, move to b
+        return curr
+    
+   
+    #add to move list probably
+    def moveLogger(self, a, b):
+        move = ''
+        piece = self.getPiece(a)
 
-    def moveHandle(self, a, b):
-        pass
+        if piece.find('bishop') != -1:
+            move += ('B')
+        elif piece.find('knight') != -1:
+            move += ('N')
+        elif piece.find('rook') != -1:
+            move += ('R')
+        elif piece.find('king') != -1:
+            move += ('K')
+        elif piece.find('queen') != -1:
+            move += ('Q')
+
+        print(move)
 
     
     #TODO update board and pieces dict
@@ -80,11 +96,13 @@ class State:
 
 
 state = State()
-state.showBoard() 
-state.updateBoard(8, 24, "white_pawns")  
-state.showBoard()  
 
-    
+
+state.updateBoard(8, 24, "white_pawns")
+
+
+state.moveLogger(4, 24)
+
 
     
 
