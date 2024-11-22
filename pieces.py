@@ -12,8 +12,8 @@ class Pieces:
         self.Bishop = 5
         self.Pawn = 6
 
-        self.White = 8
-        self.Black = 16
+        self.White = 0
+        self.Black = 8
 
         self.WhitePawn = self.Pawn | self.White
         self.WhiteKnight = self.Knight | self.White
@@ -28,3 +28,39 @@ class Pieces:
         self.BlackRook = self.Rook |self.Black
         self.BlackQueen = self.Queen |self.Black
         self.BlackKing = self.King |self.Black
+
+
+    def makePiece(self, type, color):
+        return type | color
+    
+    def isWhite(self, piece):
+        return (piece & 0b1000) == self.White and piece != 0
+    
+    def pieceColor(self, piece):
+        return (piece & 0b1000)
+    
+    def pieceType(self, piece):
+        return (piece & 0b0111)
+    
+    def getSymbol(self, piece):
+        pieceType = self.pieceType(piece)
+        if pieceType == "rook":
+            symbol = 'R'
+        elif pieceType == "knight":
+            symbol = 'N'
+        elif pieceType == "bishop":
+            symbol = 'B'
+        elif pieceType == "queen":
+            symbol = 'Q'
+        elif pieceType == "king":
+            symbol = 'K'
+        elif pieceType == "pawn":
+            symbol = 'P'
+        else:
+            symbol = ' '
+        if not self.isWhite(piece): 
+            symbol = symbol.lower()
+
+        return symbol
+
+    
