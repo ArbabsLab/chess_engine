@@ -62,5 +62,29 @@ class Pieces:
             symbol = symbol.lower()
 
         return symbol
+    
+    def getPiece(self, sym):
+        sym = sym.upper()
+        if sym == 'R':
+            return 'rook'
+        elif sym == 'N':
+            return 'knight'
+        elif sym == 'B':
+            return 'bishop'
+        elif sym == 'Q':
+            return 'queen'
+        elif sym == 'K':
+            return 'king'
+        elif sym == 'P':
+            return 'pawn'
+        else:
+            return ' '
+    
+    def IsOrthogonalSlider(self, piece):
+        if self.pieceType(piece) == 'queen' or self.pieceType(piece) == 'bishop':
+            return True
+        else:
+            return False
+
 
     
