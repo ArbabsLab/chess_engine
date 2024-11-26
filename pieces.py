@@ -81,10 +81,18 @@ class Pieces:
             return ' '
     
     def IsOrthogonalSlider(self, piece):
+        if self.pieceType(piece) == 'queen' or self.pieceType(piece) == 'rook':
+            return True
+        else:
+            return False
+        
+    def IsDiagonalSlider(self, piece):
         if self.pieceType(piece) == 'queen' or self.pieceType(piece) == 'bishop':
             return True
         else:
             return False
+    
+    
 
 
     
