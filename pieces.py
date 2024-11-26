@@ -92,7 +92,11 @@ class Pieces:
         else:
             return False
     
-    
+    def IsSlidingSlider(self, piece):
+        if self.pieceType(piece) == 'queen' or self.pieceType(piece) == 'bishop' or self.pieceType(piece) == 'rook':
+            return True
+        else:
+            return False
 
 
     
