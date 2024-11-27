@@ -19,7 +19,7 @@ class SquareManipulator:
     def MovePiece(self, a, b):
         i = self.map[a]
         self.squareOccupied[i] = self.squareOccupied[self.pieceCount - 1]
-        self.map[self.squareOccupied[i]] = i
+        self.map[self.squareOccupied[i]] = b
         self.pieceCount -= 1
     
 
