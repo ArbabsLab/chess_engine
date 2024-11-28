@@ -1,115 +1,73 @@
-#Will handle all states of the game and state updates
+from pieces import Piece
 
-#initialize starting board
-class State:
-    def __init__(self):
-        self.pieces = {
-            "white_pawns":0xFF00,
-            "white_king":0x10,
-            "white_queen":0x8,
-            "white_rook":0x81,
-            "white_knight": 0x42,
-            "white_bishop": 0x24,
-            "black_pawns":0xFF000000000000,
-            "black_king": 0x1000000000000000,  
-            "black_queen": 0x0800000000000000,  
-            "black_rook": 0x8100000000000000,  
-            "black_knight": 0x4200000000000000,  
-            "black_bishop": 0x2400000000000000,
-        }
-       
-        self.board_state = 0x0 
-        for piece, position in self.pieces.items():
-            self.board_state = self.board_state | position
-        
-        #initial flags and checks
-        self.whiteMove = True
-        self.blackMove = False
-        self.move_log = []
-        self.in_check = False
-        self.in_stalemate = False
-        self.in_mate = False
-    
-    
-    def getBoard(self):
-        board = []
-        for i in range(63, -1, -1):
-            board.append(int(bool(self.board_state & (1 << i))))
-        return board
-    
-    def showBoard(self):
-        board = self.getBoard()
-        for i in range(64):
-            if i % 8 == 0:
-                print("\n")
-                print(board[i], end=" ")
-            else:
-                print(board[i], end=" ")
-        print("\n")
+class Move:
+    # Flags
+    NoFlag = 0b0000
+    EnPassantCaptureFlag = 0b0001
+    CastleFlag = 0b0010
+    PawnTwoUpFlag = 0b0011
 
-    def toggleTurn(self):
-        self.blackMove = not self.whiteMove
-        self.whiteMove = not self.blackMove
-    
-    
-    def getPiece(self, square):
-    #parse square into bit position
-        square = 2 ** square
-        curr = ''
+    PromoteToQueenFlag = 0b0100
+    PromoteToKnightFlag = 0b0101
+    PromoteToRookFlag = 0b0110
+    PromoteToBishopFlag = 0b0111
 
-        for piece, pos in self.pieces.items():
-            check = bool(self.board_state & pos & square)
-            if check:
-                curr = piece
-            
-        return curr
-    
-   
-    #add to move list probably
-    def moveLogger(self, a, b):
-        move = ''
-        piece = self.getPiece(a)
+    # Masks
+    startSquareMask = 0b0000000000111111
+    targetSquareMask = 0b0000111111000000
+    flagMask = 0b1111000000000000
 
-        if piece.find('bishop') != -1:
-            move += ('B')
-        elif piece.find('knight') != -1:
-            move += ('N')
-        elif piece.find('rook') != -1:
-            move += ('R')
-        elif piece.find('king') != -1:
-            move += ('K')
-        elif piece.find('queen') != -1:
-            move += ('Q')
+    def __init__(self, move_value=None, start_square=None, target_square=None, flag=None):
+        if move_value is not None:
+            self.move_value = move_value
+        elif start_square is not None and target_square is not None:
+            self.move_value = (start_square | (target_square << 6))
+        elif start_square is not None and target_square is not None and flag is not None:
+            self.move_value = (start_square | (target_square << 6) | (flag << 12))
+        else:
+            self.move_value = 0
 
-        print(move)
+    @property
+    def value(self):
+        return self.move_value
 
-    
-    #TODO update board and pieces dict
-    #may have to alter for capturing since xor wont work in that case
-    def updateBoard(self, a, b, piece_to_update):
-        #self.board_state = self.board_state ^ (2**a)
-        #self.board_state = self.board_state | (2**b)
-        self.pieces[piece_to_update] = self.pieces[piece_to_update] ^ (2**a) | (2**b)
-        self.board_state = 0
-        for piece, position in self.pieces.items():
-            self.board_state = self.board_state | position
+    @property
+    def is_null(self):
+        return self.move_value == 0
 
+    @property
+    def start_square(self):
+        return self.move_value & self.startSquareMask
 
-state = State()
+    @property
+    def target_square(self):
+        return (self.move_value & self.targetSquareMask) >> 6
 
+    @property
+    def is_promotion(self):
+        return self.move_flag >= self.PromoteToQueenFlag
 
-state.updateBoard(8, 24, "white_pawns")
+    @property
+    def move_flag(self):
+        return self.move_value >> 12
 
+    @property
+    def promotion_piece_type(self):
+        if self.move_flag == self.PromoteToRookFlag:
+            return Piece.Rook
+        elif self.move_flag == self.PromoteToKnightFlag:
+            return Piece.Knight
+        elif self.move_flag == self.PromoteToBishopFlag:
+            return Piece.Bishop
+        elif self.move_flag == self.PromoteToQueenFlag:
+            return Piece.Queen
+        else:
+            return Piece.None
 
-state.moveLogger(4, 24)
+    @staticmethod
+    def null_move():
+        return Move(0)
 
-
-    
-
-
-        
-
-
-
-
-    
+    @staticmethod
+    def same_move(a, b):
+        return a.move_value == b.move_value

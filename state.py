@@ -1,4 +1,4 @@
-class State():
+class GameState():
     def __init__(self) -> None:
         self.capturedPieceType = 0
         self.enpassantFile = 0
@@ -10,3 +10,11 @@ class State():
         self.enPassantFile = enPassantFile
         self.castlingRights = castlingRights
         self.fiftyMoveCounter = fiftyMoveCounter
+    
+    def canCastleKing(self, white):
+        mask = 1 if white else 4
+        return (self.castlingRights & mask) != 0
+    
+    def canCastleQueen(self, white):
+        mask = 2 if white else 8
+        return (self.castlingRights & mask) != 0
